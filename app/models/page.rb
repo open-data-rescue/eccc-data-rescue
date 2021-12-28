@@ -26,6 +26,10 @@ class Page < ApplicationRecord
                   },
                   default_style: :medium,
                   url: "/uploads/:class/:style/:image_file_name"
+
+  include PaperclipShrineSynchronization
+  include PageImageUploader::Attachment(:image)
+
   validates_attachment :image,
                      content_type: { content_type: ["image/jpg","image/jpeg", "image/png"] }
 

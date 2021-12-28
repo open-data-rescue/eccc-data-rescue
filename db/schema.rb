@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_12_25_165452) do
+ActiveRecord::Schema.define(version: 2021_12_28_224227) do
 
   create_table "annotations", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.integer "x_tl"
@@ -210,6 +210,7 @@ ActiveRecord::Schema.define(version: 2021_12_25_165452) do
     t.datetime "image_updated_at"
     t.string "volume"
     t.boolean "visible", default: true
+    t.json "image_data"
     t.index ["page_type_id"], name: "index_pages_on_page_type_id"
   end
 
