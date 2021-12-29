@@ -5,7 +5,7 @@ require 'shrine/storage/file_system'
 Shrine.storages = { 
   cache: Shrine::Storage::FileSystem.new('public', prefix: 'uploads/cache'),
   store: Shrine::Storage::FileSystem.new('uploads', prefix: '/'),
-  paperclip_store: Shrine::Storage::FileSystem.new('uploads', prefix: '/draw/public'),
+  paperclip_store: Shrine::Storage::FileSystem.new('uploads', prefix: ENV.fetch('PAPERCLIP_STORAGE_PREFIX', '/draw/public')),
 }
  
 Shrine.plugin :activerecord # or :activerecord 

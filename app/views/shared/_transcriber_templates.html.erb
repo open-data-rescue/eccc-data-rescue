@@ -87,11 +87,11 @@
 </script>
 
 <script type="text/template" id="page-canvas-template">
-  <img src="<%= page.image.url(:original) %>" alt="" id="target-image">
+  <img src="<%= page.image_url(:original) %>" alt="" id="target-image">
 </script>
 
 <script type="text/template" id="page-image-template">
-  <img src="<%= page.image.url(:original) %>" id="{{= image_id }}">
+  <img src="<%= page.image_url(:original) %>" id="{{= image_id }}">
 </script>
 
 <script id="annotation-box-template" type="text/template">
