@@ -24,7 +24,7 @@ class Page < ApplicationRecord
                     large: ["600x600>", :jpg],
                     xlarge: ["1000x1000>", :jpg]
                   },
-                  default_style: :medium,
+                  default_style: :original,
                   url: "/uploads/:class/:style/:image_file_name"
   validates_attachment :image,
                      content_type: { content_type: ["image/jpg","image/jpeg", "image/png"] }

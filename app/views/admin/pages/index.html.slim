@@ -30,7 +30,6 @@ h3.boffset20
         - @pages.each do |page|
           tr
             td
-              = link_to image_tag(page.image.url(:thumb)), admin_page_path(page)
               = link_to image_tag(page.image_url(:thumb)), admin_page_path(page)
             td = page.title
             td = page.height
