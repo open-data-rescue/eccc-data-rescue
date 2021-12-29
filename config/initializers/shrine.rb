@@ -3,23 +3,25 @@ require 'shrine'
 require 'shrine/storage/file_system'
  
 Shrine.storages = { 
-  cache: Shrine::Storage::FileSystem.new('public', prefix: 'uploads/cache'), # temporary 
-  store: Shrine::Storage::FileSystem.new(
-    'public',
-    prefix: 'uploads'
-  ),
+  cache: Shrine::Storage::FileSystem.new('public', prefix: 'uploads/cache'),
+  store: Shrine::Storage::FileSystem.new('uploads', prefix: '/'),
+  paperclip_store: Shrine::Storage::FileSystem.new('uploads', prefix: '/draw/public'),
 }
  
 Shrine.plugin :activerecord # or :activerecord 
 Shrine.plugin :cached_attachment_data # for retaining the cached file across form redisplays 
-Shrine.plugin :restore_cached_data # re-extract metadata when attaching a cached file 
+Shrine.plugin :restore_cached_data # re-extract metadata when attaching a cached file
 
 Shrine.plugin :model
-Shrine.plugin :derivatives
-Shrine.plugin :pretty_location
+Shrine.plugin :derivatives#, create_on_promote: true
 Shrine.plugin :url_options, store: {
   host: ENV.fetch('ASSET_HOST', ENV.fetch('BASE_URL'))
 }
+
+# delay promoting and deleting files to a background job (`backgrounding` plugin)
+# Shrine.plugin :backgrounding
+# Shrine::Attacher.promote_block { Attachment::PromoteJob.perform_later(record, name.to_s, file_data) }
+# Shrine::Attacher.destroy_block { Attachment::DestroyJob.perform_later(data) }
  
 module PaperclipShrineSynchronization
   def self.included(model)
@@ -58,8 +60,8 @@ module PaperclipShrineSynchronization
   def shrine_attachment_file(attachment)
     location = attachment.path
     # if you're storing files on disk, make sure to subtract the absolute path 
-    location = location.sub(%r{^#{storage.prefix}/}, "") if storage.prefix
- 
+    location = location.sub(%r{^/#{paperclip_storage.prefix}/}, "") if paperclip_storage.prefix
+    # byebug
     Shrine.uploaded_file(
       storage:  :store,
       id:       location,
@@ -77,7 +79,7 @@ module PaperclipShrineSynchronization
   def shrine_style_file(style)
     location = style.attachment.path(style.name)
     # if you're storing files on disk, make sure to subtract the absolute path 
-    location = location.sub(%r{^#{storage.prefix}/}, "") if storage.prefix
+    location = location.sub(%r{^/#{paperclip_storage.prefix}/}, "") if paperclip_storage.prefix
  
     Shrine.uploaded_file(
       storage:  :store,
@@ -86,7 +88,7 @@ module PaperclipShrineSynchronization
     )
   end
  
-  def storage
-    Shrine.storages[:store]
+  def paperclip_storage
+    Shrine.storages[:paperclip_store]
   end
 end
